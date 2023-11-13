@@ -91,13 +91,29 @@ def change_client(conn, client_id, fist_name=None, last_name=None, email=None, p
         result = cur.fetchall()
         print(result)
         if len(result) != 0:
-            sql = "UPDATE client SET fist_name = %s, last_name = %s WHERE id = %s"
-            cur.execute(sql, (fist_name, last_name, client_id))
-            sql = "UPDATE email SET email = %s WHERE id = %s"
-            cur.execute(sql, (email, client_id))
-            sql = "UPDATE phone SET phone_no = %s WHERE id = %s"
-            cur.execute(sql, (phone, client_id))
-            conn.commit()
+            if fist_name != None:
+                sql = "UPDATE client SET fist_name = %s WHERE id = %s"
+                cur.execute(sql, (fist_name, client_id))
+                conn.commit()
+            elif last_name != None:
+                sql = "UPDATE client SET last_name = %s WHERE id = %s"
+                cur.execute(sql, (last_name, client_id))
+                conn.commit()
+            elif email != None:
+                sql = "UPDATE email SET email = %s WHERE id = %s"
+                cur.execute(sql, (email, client_id))
+                conn.commit()
+            elif phone != None:
+                sql = "UPDATE phone SET phone_no = %s WHERE id = %s"
+                cur.execute(sql, (phone, client_id))
+                conn.commit()
+            # sql = "UPDATE client SET fist_name = %s, last_name = %s WHERE id = %s"
+            # cur.execute(sql, (fist_name, last_name, client_id))
+            # sql = "UPDATE email SET email = %s WHERE id = %s"
+            # cur.execute(sql, (email, client_id))
+            # sql = "UPDATE phone SET phone_no = %s WHERE id = %s"
+            # cur.execute(sql, (phone, client_id))
+            # conn.commit()
             print(f'Обновление данных клиенту - "{client_id}" прошло успешно!')
         else:
             print(f'Клиента с таким ID- "{client_id}" нет, попробуйте еще раз!')
@@ -140,21 +156,32 @@ def del_client(conn, client_id):
 
 def find_client(conn, fist_name=None, last_name=None, email=None, phone=None):
     with conn.cursor() as cur:
+        # sql1 = ("SELECT * FROM client AS c "
+        #         "JOIN phone AS p ON c.id = p.id "
+        #         "JOIN email AS e ON c.id = e.id "
+        #         "WHERE c.fist_name=%s OR c.last_name=%s OR e.email=%s OR p.phone_no=%s")
+        # cur.execute(sql1, (fist_name, last_name, email, phone))
+        # result = cur.fetchall()
+        # print(result)
         sql1 = ("SELECT * FROM client AS c "
                 "JOIN phone AS p ON c.id = p.id "
                 "JOIN email AS e ON c.id = e.id "
-                "WHERE c.fist_name=%s OR c.last_name=%s OR e.email=%s OR p.phone_no=%s")
+                "WHERE c.fist_name like %s OR c.last_name like %s OR e.email like %s OR p.phone_no like %s")
         cur.execute(sql1, (fist_name, last_name, email, phone))
         result = cur.fetchall()
         print(result)
 
-# createTables(conn)
-# add_client(conn, "Евгений", "Михайлов", "ev@mail.ru", "+79241221540")
-# add_client(conn, "Владимир", "Ухов", "vu@gmail.com", "+79241221570")
-# add_client(conn, "Дмитрий", "Руков", "dr@gmail.com", )
-# add_phone(conn, "3", "+79147115548")
-# change_client(conn, "2", "Vladimir", "Uhov", "uhov_v@mail.ru", "+7-908-998-1622")
-# del_phone(conn, "3", "Null")
-# del_client(conn, "3")
-find_client(conn, "Евгений")
+
+
+if __name__ == "__main__":
+    # createTables(conn)
+    # add_client(conn, "Евгений", "Михайлов", "ev@mail.ru", "+79241221540")
+    # add_client(conn, "Владимир", "Ухов", "vu@gmail.com", "+79241221570")
+    # add_client(conn, "Дмитрий", "Руков", "dr@gmail.com", )
+    # add_phone(conn, "3", "+79147115548")
+    # change_client(conn, "2", last_name="Мухов")
+    # del_phone(conn, "3", "Null")
+    # del_client(conn, "3")
+    find_client(conn, last_name="Мухов", fist_name="Евгений")
+
 conn.close()
